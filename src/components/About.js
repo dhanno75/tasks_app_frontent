@@ -32,7 +32,7 @@ const Container = styled.div`
   width: 100vw;
   padding: 0 30px;
   background-color: rgb(252, 244, 255);
-  height: 100vh;
+  height: 90vh;
 
   .about-left {
     display: flex;
