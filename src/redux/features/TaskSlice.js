@@ -12,7 +12,8 @@ export const addTask = createAsyncThunk(
           token: localStorage.getItem("token"),
         },
       };
-      await axios.post(`${API}/tasks/addTask`);
+      const { data } = await axios.post(`${API}/tasks/addTask`, config, values);
+      return data;
     } catch (err) {
       if (err.response && err.response.data.message) {
         return rejectWithValue(err.response.data.message);
@@ -50,44 +51,6 @@ const TaskSlice = createSlice({
         state.tasks = payload;
       })
       .addCase(addTask.rejected, (state, { payload }) => {
-        state.loading = false;
-        state.error = payload;
-      })
-      .addCase(login.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(login.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.success = true;
-        state.userInfo = payload;
-        state.userToken = payload.token;
-      })
-      .addCase(login.rejected, (state, { payload }) => {
-        state.loading = false;
-        state.error = payload;
-      })
-      .addCase(forgotPassword.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(forgotPassword.fulfilled, (state) => {
-        state.loading = false;
-        state.success = true;
-      })
-      .addCase(forgotPassword.rejected, (state, { payload }) => {
-        state.loading = false;
-        state.error = payload;
-      })
-      .addCase(resetPassword.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(resetPassword.fulfilled, (state) => {
-        state.loading = false;
-        state.success = true;
-      })
-      .addCase(resetPassword.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
       });

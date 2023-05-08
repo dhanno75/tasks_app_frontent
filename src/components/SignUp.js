@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { signUpSchema } from "../schemas";
-import { signup } from "../redux/features/UserSlice";
+import { clearSomeState, signup } from "../redux/features/UserSlice";
 import { MutatingDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
@@ -41,11 +41,13 @@ const SignUp = () => {
   useEffect(() => {
     if (error) {
       toast.warn(error);
+      dispatch(clearSomeState());
     }
     if (success) {
       toast.success(
         "Successful signup. Please check your email for email verification."
       );
+      dispatch(clearSomeState());
       navigate("/about");
     }
   }, [error, success, navigate]);

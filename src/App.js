@@ -9,6 +9,7 @@ import ForgotPassword from "./components/ForgotPassword";
 import Navigation from "./components/Navigation";
 import About from "./components/About";
 import VerifiedViewPage from "./components/VerifiedViewPage";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           element={<VerifiedViewPage />}
         />
         <Route path="/about" element={<About />} />
+        <Route path="/" element={<Dashboard />} />
       </Routes>
     </>
   );

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSchema } from "../schemas";
-import { login } from "../redux/features/UserSlice";
+import { clearSomeState, login } from "../redux/features/UserSlice";
 import { toast } from "react-toastify";
 
 const initialValues = {
@@ -28,12 +28,14 @@ const Login = () => {
   useEffect(() => {
     if (error) {
       toast.warn(error);
+      dispatch(clearSomeState());
     }
-    if (success) {
+    if (success === true) {
       toast.success("Successful Login");
+      dispatch(clearSomeState());
       navigate("/about");
     }
-  }, [error, success, navigate]);
+  });
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({

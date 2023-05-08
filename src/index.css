@@ -4,11 +4,15 @@
   box-sizing: border-box;
 }
 
+html {
+  background-color: #fffff0;
+}
+
 body {
   margin: 0;
   border: 0;
   font-family: "Raleway", sans-serif;
-  background-color: #ecf0f3;
+  background-color: #fffdd0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

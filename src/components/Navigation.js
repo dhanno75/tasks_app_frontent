@@ -1,20 +1,42 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import styled from "styled-components";
+import { FiLogOut } from "react-icons/fi";
 
 const Navigation = () => {
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  const name = localStorage.getItem("name");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("name");
+    toast.warn("Logged out successfully!");
+    navigate("/login");
+  };
+
   return (
-    <Container>
+    <Container isLoggedIn={isLoggedIn}>
       <div className="left">
-        <p className="logo">Todo App</p>
+        <p className="logo">TasksBoard</p>
         <div>
           <Link to="/about">About</Link>
         </div>
       </div>
 
       <div className="right">
-        <Link to="/signup">Sign Up</Link>
-        <Link to="/login">Login</Link>
+        {isLoggedIn ? (
+          <p>Hi, {name.split(" ")[0]}</p>
+        ) : (
+          <Link to="/signup">Sign Up</Link>
+        )}
+        {isLoggedIn ? (
+          <FiLogOut onClick={handleLogout} />
+        ) : (
+          <Link to="/login">Login</Link>
+        )}
       </div>
     </Container>
   );
@@ -26,7 +48,7 @@ const Container = styled.nav`
   padding: 20px;
   padding-left: 30px;
   padding-right: 30px;
-  background-color: rgb(43, 124, 73);
+  background-color: #094507;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -39,6 +61,8 @@ const Container = styled.nav`
 
     p {
       font-size: 22px;
+      margin: 0;
+      color: #d4af37;
     }
   }
 
@@ -46,13 +70,29 @@ const Container = styled.nav`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 10%;
+    /* width: 10%; */
+    width: ${({ isLoggedIn }) => (isLoggedIn ? "12%" : "10%")};
+    margin-right: 12px;
+
+    p {
+      font-size: 18px;
+      height: 100%;
+      margin-bottom: 0;
+      color: #b5c7b5;
+    }
+
+    svg {
+      background: transparent;
+      font-size: 22px;
+      color: #b5c7b5;
+      cursor: pointer;
+    }
   }
 
   a {
     text-decoration: none;
     font-size: 18px;
-    color: rgb(201, 249, 219);
+    color: #b5c7b5;
     /* padding: 10px; */
     height: 100%;
     transition: all 0.3s;

@@ -76,6 +76,7 @@ export const login = createAsyncThunk(
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("name", data.data.name);
       return data;
     } catch (err) {
       if (err.response && err.response.data.message) {
@@ -112,7 +113,7 @@ const UserSlice = createSlice({
       })
       .addCase(signup.fulfilled, (state, { payload }) => {
         state.loading = false;
-        state.success = true;
+        state.success = false;
       })
       .addCase(signup.rejected, (state, { payload }) => {
         state.loading = false;
