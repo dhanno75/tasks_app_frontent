@@ -8,22 +8,14 @@ import { clearSomeState, login } from "../redux/features/UserSlice";
 import { toast } from "react-toastify";
 
 const initialValues = {
-  email: "",
-  password: "",
+  email: "nodoto5502@meidecn.com",
+  password: "74108520",
 };
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error, userInfo, success } = useSelector(
-    (state) => state.user
-  );
-
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     navigate("/about");
-  //   }
-  // }, [navigate, userInfo]);
+  const { loading, error, success } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (error) {
@@ -33,7 +25,7 @@ const Login = () => {
     if (success === true) {
       toast.success("Successful Login");
       dispatch(clearSomeState());
-      navigate("/about");
+      navigate("/");
     }
   });
 

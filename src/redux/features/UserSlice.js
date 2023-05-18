@@ -77,6 +77,7 @@ export const login = createAsyncThunk(
       localStorage.setItem("token", data.token);
       localStorage.setItem("isLoggedIn", true);
       localStorage.setItem("name", data.data.name);
+      localStorage.setItem("userId", data.data._id);
       return data;
     } catch (err) {
       if (err.response && err.response.data.message) {

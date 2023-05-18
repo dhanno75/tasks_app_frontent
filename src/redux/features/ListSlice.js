@@ -2,23 +2,17 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API } from "../../globals";
 
-export const addTasks = createAsyncThunk(
-  "tasks/addTask",
+export const addList = createAsyncThunk(
+  "lists/addList",
   async (values, { rejectWithValue }) => {
     try {
-      console.log(values.vals);
       const config = {
         headers: {
           "Content-Type": "application/json",
           token: localStorage.getItem("token"),
         },
       };
-      const { data } = await axios.post(
-        `${API}/lists/${values.listId}/tasks`,
-        config,
-        values.vals
-      );
-      console.log(data);
+      const { data } = await axios.post(`${API}/lists/addList`, config, values);
       return data;
     } catch (err) {
       if (err.response && err.response.data.message) {
@@ -30,8 +24,8 @@ export const addTasks = createAsyncThunk(
   }
 );
 
-export const getTasks = createAsyncThunk(
-  "tasks/getTasks",
+export const getLists = createAsyncThunk(
+  "tasks/getLists",
   async (values, { rejectWithValue }) => {
     try {
       const config = {
@@ -42,7 +36,7 @@ export const getTasks = createAsyncThunk(
       };
 
       const { data } = await axios.get(
-        `${API}/lists/${values.listId}/tasks`,
+        `${API}/lists/listsByUid/${values.userId}`,
         config
       );
 
@@ -57,12 +51,12 @@ export const getTasks = createAsyncThunk(
   }
 );
 
-const TaskSlice = createSlice({
-  name: "tasks",
+const ListSlice = createSlice({
+  name: "lists",
   initialState: {
-    tasks: [],
+    lists: [],
     loading: false,
-    tasksInfo: null,
+    listsInfo: null,
     error: null,
     success: false,
   },
@@ -75,36 +69,35 @@ const TaskSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(addTasks.pending, (state) => {
+      .addCase(addList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(addTasks.fulfilled, (state, { payload }) => {
+      .addCase(addList.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true;
-        state.tasks = payload;
+        state.lists = payload;
       })
-      .addCase(addTasks.rejected, (state, { payload }) => {
-        console.log(payload);
+      .addCase(addList.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
       })
-      .addCase(getTasks.pending, (state) => {
+      .addCase(getLists.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getTasks.fulfilled, (state, { payload }) => {
+      .addCase(getLists.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true;
-        state.tasks = payload.data;
-        state.tasksInfo = payload;
+        state.lists = payload.data;
+        state.listsInfo = payload;
       })
-      .addCase(getTasks.rejected, (state, { payload }) => {
+      .addCase(getLists.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
       });
   },
 });
 
-export const { clearSomeState } = TaskSlice.actions;
-export default TaskSlice.reducer;
+export const { clearSomeState } = ListSlice.actions;
+export default ListSlice.reducer;

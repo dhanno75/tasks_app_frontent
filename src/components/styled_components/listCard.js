@@ -111,6 +111,12 @@ export const ListContainer = styled.div`
 
       .taskName {
         margin-bottom: 5px;
+        .t-name {
+          font-size: 14px;
+        }
+        .t-text {
+          font-size: 12px;
+        }
       }
 
       textarea {
@@ -127,6 +133,8 @@ export const ListContainer = styled.div`
 
       .taskTitle {
         padding-bottom: 0;
+        margin-bottom: 0;
+        font-size: 14px;
 
         &::placeholder {
           font-size: 14px;
@@ -137,6 +145,8 @@ export const ListContainer = styled.div`
 
       .taskDetail {
         padding-top: 0;
+        margin-top: 0;
+        font-size: 12px;
 
         &::placeholder {
           font-size: 12px;
@@ -167,8 +177,69 @@ export const ListContainer = styled.div`
       }
     }
 
+    .taskDetails-container-db {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+      width: 100%;
+      padding: 0 12px;
+
+      .t {
+        flex: 1;
+        color: #5b5a5a;
+
+        .t-name {
+          font-size: 14px;
+          font-family: Raleway, "sans-serif";
+          font-weight: 600;
+        }
+
+        .t-text {
+          font-size: 12px;
+          font-family: Raleway, "sans-serif";
+          font-weight: 500;
+        }
+      }
+    }
+
+    .dotsVertical-db {
+      font-size: 24px;
+    }
+
     .dotsVertical {
       font-size: 30px;
+    }
+  }
+
+  .complete {
+    .complete-details {
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .complete-icons {
+        width: 20px;
+        svg {
+          font-size: 20px;
+          color: #0472d8;
+          cursor: pointer;
+        }
+
+        .trash {
+          color: #fa6d08 !important;
+          font-size: 18px;
+        }
+      }
+
+      p {
+        margin-bottom: 0;
+        margin-left: 4px;
+        flex: 1;
+        text-decoration: line-through;
+        text-decoration-color: #5b5b5b;
+      }
     }
   }
 `;
