@@ -33,6 +33,7 @@ export const addTasks = createAsyncThunk(
 export const getTasks = createAsyncThunk(
   "tasks/getTasks",
   async (values, { rejectWithValue }) => {
+    console.log(values);
     try {
       const config = {
         headers: {
@@ -94,6 +95,7 @@ const TaskSlice = createSlice({
         state.error = null;
       })
       .addCase(getTasks.fulfilled, (state, { payload }) => {
+        console.log(payload);
         state.loading = false;
         state.success = true;
         state.tasks = payload.data;

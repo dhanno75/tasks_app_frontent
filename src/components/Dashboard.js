@@ -241,7 +241,6 @@ const Dashboard = () => {
               key={list._id}
             >
               <div className="paper-header">
-                <p>{list._id}</p>
                 <p>{list.name}</p>
                 <Popover content={content} trigger="click" className="pops">
                   <TbDotsVertical style={{ cursor: "pointer" }} />
@@ -255,7 +254,6 @@ const Dashboard = () => {
                 if (task.listId === list._id) {
                   return (
                     <div className="taskDetails-wrapper" key={task._id}>
-                      <p>{task._id}</p>
                       <div className="taskDetails">
                         <div className="check">
                           <MuiCheckbox
@@ -457,7 +455,7 @@ const Dashboard = () => {
             </Paper>
           </ListContainer>
         ))}
-        {/* {addList ? (
+        {addList ? (
           <div className="addListName" onBlur={() => setAddList(false)}>
             <form onSubmit={listSubmit}>
               <input
@@ -480,7 +478,7 @@ const Dashboard = () => {
           >
             <TbPlus /> &nbsp;Add new list
           </Button>
-        )} */}
+        )}
         {/* {buttons ? (
           <Button
             className="newListButton"

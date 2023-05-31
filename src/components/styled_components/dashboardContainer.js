@@ -17,7 +17,7 @@ export const DashboardContainer = styled.div`
       margin: 0;
       font-size: 15px;
       font-weight: 500;
-      font-family: Raleway;
+      font-family: Raleway, "sans-serif";
       word-spacing: 2px;
     }
     svg {
