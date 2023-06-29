@@ -27,11 +27,7 @@ const Navigation = () => {
       </div>
 
       <div className="right">
-        {isLoggedIn ? (
-          <p>Hi, {name.split(" ")[0]}</p>
-        ) : (
-          <Link to="/signup">Sign Up</Link>
-        )}
+        {isLoggedIn ? <p>Hi, {name}</p> : <Link to="/signup">Sign Up</Link>}
         {isLoggedIn ? (
           <FiLogOut onClick={handleLogout} />
         ) : (

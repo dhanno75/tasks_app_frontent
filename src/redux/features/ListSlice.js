@@ -2,17 +2,45 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API } from "../../globals";
 
-export const addList = createAsyncThunk(
-  "lists/addList",
+export const addingList = createAsyncThunk(
+  "lists/addingList",
   async (values, { rejectWithValue }) => {
     try {
-      const config = {
+      const res = await fetch(`${API}/lists/addList`, {
+        method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
           token: localStorage.getItem("token"),
         },
-      };
-      const { data } = await axios.post(`${API}/lists/addList`, config, values);
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        return rejectWithValue(err.response.data.message);
+      } else {
+        return rejectWithValue(err.message);
+      }
+    }
+  }
+);
+
+export const updatingList = createAsyncThunk(
+  "lists/updatingList",
+  async (values, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${API}/lists/updateList/${values.id}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          token: localStorage.getItem("token"),
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
       return data;
     } catch (err) {
       if (err.response && err.response.data.message) {
@@ -39,7 +67,6 @@ export const getLists = createAsyncThunk(
         `${API}/lists/listsByUid/${values.userId}`,
         config
       );
-
       return data;
     } catch (err) {
       if (err.response && err.response.data.message) {
@@ -69,16 +96,17 @@ const ListSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(addList.pending, (state) => {
+      .addCase(addingList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(addList.fulfilled, (state, { payload }) => {
+      .addCase(addingList.fulfilled, (state, { payload }) => {
+        console.log(payload);
         state.loading = false;
         state.success = true;
-        state.lists = payload;
+        state.lists.push(payload.data);
       })
-      .addCase(addList.rejected, (state, { payload }) => {
+      .addCase(addingList.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload;
       })
@@ -89,7 +117,7 @@ const ListSlice = createSlice({
       .addCase(getLists.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.success = true;
-        state.lists = payload.data;
+        state.lists = payload.result;
         state.listsInfo = payload;
       })
       .addCase(getLists.rejected, (state, { payload }) => {

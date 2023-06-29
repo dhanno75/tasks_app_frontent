@@ -18,7 +18,6 @@ export const addTasks = createAsyncThunk(
         config,
         values.vals
       );
-      console.log(data);
       return data;
     } catch (err) {
       if (err.response && err.response.data.message) {
@@ -33,7 +32,6 @@ export const addTasks = createAsyncThunk(
 export const getTasks = createAsyncThunk(
   "tasks/getTasks",
   async (values, { rejectWithValue }) => {
-    console.log(values);
     try {
       const config = {
         headers: {
@@ -42,11 +40,8 @@ export const getTasks = createAsyncThunk(
         },
       };
 
-      const { data } = await axios.get(
-        `${API}/lists/${values.listId}/tasks`,
-        config
-      );
-
+      const { data } = await axios.get(`${API}/tasks/${values.listId}`, config);
+      console.log(data);
       return data;
     } catch (err) {
       if (err.response && err.response.data.message) {
@@ -95,7 +90,6 @@ const TaskSlice = createSlice({
         state.error = null;
       })
       .addCase(getTasks.fulfilled, (state, { payload }) => {
-        console.log(payload);
         state.loading = false;
         state.success = true;
         state.tasks = payload.data;

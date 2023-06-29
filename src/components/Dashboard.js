@@ -22,8 +22,7 @@ import { TbDotsVertical, TbPlus } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 // import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { getLists } from "../redux/features/ListSlice";
-import { getTasks } from "../redux/features/TaskSlice";
+import { addingList, getLists } from "../redux/features/ListSlice";
 import { DashboardContainer } from "./styled_components/dashboardContainer";
 import { Pop, ListContainer } from "./styled_components/listCard";
 import {
@@ -42,16 +41,19 @@ import { Popover } from "antd";
 import { Tag } from "antd";
 import DateTask from "./DateTask";
 import { API } from "../globals";
+import BounceLoader from "react-spinners/BounceLoader";
 
 const Dashboard = () => {
   // let date = new Date(Date.now()).toISOString().split("-");
   // let todaysDate = `${date[0]}-${date[1]}-${date[2][0]}${date[2][1]}`;
   const [addList, setAddList] = useState(false);
+  const [ulName, setULName] = useState("");
   const [addTask, setAddTask] = useState("");
-  const [titleName, setTitleName] = useState("");
   const [completed, setCompleted] = useState(false);
   const [dateValue, setDateValue] = useState("");
   const [priority, setPriority] = useState("");
+
+  const [editList, setEditList] = useState("false");
 
   const [tname, setTName] = useState("");
   const [tdname, setTDName] = useState("");
@@ -69,30 +71,18 @@ const Dashboard = () => {
 
   const userId = localStorage.getItem("userId");
   const { lists } = useSelector((state) => state.list);
-  const { tasks } = useSelector((state) => state.task);
-
-  const listTasks = function () {
-    lists.forEach((list) => {
-      dispatch(getTasks({ listId: list._id }));
-    });
-  };
-
-  // const res = lists.map(list => return)
+  console.log(ulName);
 
   useEffect(() => {
     dispatch(getLists({ userId }));
   }, [dispatch, userId]);
 
-  useEffect(() => {
-    listTasks();
-  }, [lists]);
-
   const listSubmit = async (e) => {
     e.preventDefault();
     const name = listRef.current.value;
-    setTitleName(name);
     setAddTask(true);
     setAddList(false);
+    dispatch(addingList({ name }));
   };
 
   const taskSubmit = async (e) => {
@@ -117,15 +107,6 @@ const Dashboard = () => {
             : "",
       },
     };
-    // dispatch(addTasks(values));
-    const token = localStorage.getItem("token");
-    console.log(token);
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        token,
-      },
-    };
 
     await fetch(`${API}/lists/${values.listId}/tasks`, {
       method: "POST",
@@ -136,35 +117,60 @@ const Dashboard = () => {
         token: localStorage.getItem("token"),
       },
     });
-
-    // await axios.post(
-    //   `${API}/lists/${values.listId}/tasks`,
-    //   config,
-    //   values.vals
-    // );
-    console.log(tname, tdname, dateForm, priority);
   };
 
   const handleDelete = () => {
     console.info("You clicked the delete icon.");
   };
 
-  const content = (
-    <Pop>
-      <ul>
-        <li>
-          <HiPencil /> <span> Rename list</span>
-        </li>
-        <li>
-          <FaPaintBrush /> <span> Set color</span>
-        </li>
-        <li>
-          <HiTrash />
-          <span> Delete list</span>
-        </li>
-      </ul>
-    </Pop>
-  );
+  const deleteList = async (listId) => {
+    await fetch(`${API}/lists/deleteList/${listId}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        token: localStorage.getItem("token"),
+      },
+    });
+    window.location.reload();
+  };
+
+  const setListData = async function (list) {
+    setULName(list.name);
+  };
+
+  const updateList = async (id) => {
+    const res = await fetch(`${API}/lists/updateList/${id}`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        token: localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ name: ulName }),
+    });
+    const data = await res.json();
+    window.location.reload(false);
+  };
+
+  // const content = function () {
+  //   return (
+  //     <Pop>
+  //       <ul>
+  //         <li>
+  //           <HiPencil /> <span> Rename list</span>
+  //         </li>
+  //         <li>
+  //           <FaPaintBrush /> <span> Set color</span>
+  //         </li>
+  //         <li>
+  //           <HiTrash onClick={() => deleteList()} />
+  //           <span> Delete list</span>
+  //         </li>
+  //       </ul>
+  //     </Pop>
+  //   );
+  // };
 
   const calendar = (
     <div>
@@ -228,233 +234,277 @@ const Dashboard = () => {
           padding: "20px",
         }}
       >
-        {lists.map((list, i) => (
-          <ListContainer key={list._id}>
-            <Paper
-              sx={{
-                padding: "12px",
-                margin: "auto",
-                height: "auto",
-                backgroundColor: "#fff",
-                borderLeft: `10px solid ${list.color}`,
-              }}
-              key={list._id}
-            >
-              <div className="paper-header">
-                <p>{list.name}</p>
-                <Popover content={content} trigger="click" className="pops">
-                  <TbDotsVertical style={{ cursor: "pointer" }} />
-                </Popover>
-              </div>
-              <div className="addTask" onClick={() => setAddTask(list._id)}>
-                <TbPlus size={19} />
-                <span>Add a task</span>
-              </div>
-              {tasks.map((task, i) => {
-                if (task.listId === list._id) {
-                  return (
-                    <div className="taskDetails-wrapper" key={task._id}>
-                      <div className="taskDetails">
-                        <div className="check">
-                          <MuiCheckbox
-                            icon={<RadioButtonUncheckedIcon />}
-                            checkedIcon={<CheckCircleOutlineIcon />}
-                            className="checkbox"
-                            sx={{ "& .MuiSvgIcon-root": { fontSize: 20 } }}
-                          />
-                        </div>
-                        <div className="taskDetails-container-db">
-                          <div className="t">
-                            <div className="t-name">{task.taskName}</div>
-                            <div className="t-text">{task.text}</div>
-                          </div>
-                          <div className="date-label">
-                            <div className="date" sx={{ marginBotton: "10px" }}>
-                              <DateTask dateNow={task.date} />
-                            </div>
-                            {task.priority === "low" ? (
-                              <Tag color="success">{task.priority}</Tag>
-                            ) : task.priority === "high" ? (
-                              <Tag color="warning">{task.priority}</Tag>
-                            ) : task.priority === "critical" ? (
-                              <Tag color="error">{task.priority}</Tag>
-                            ) : (
-                              ""
-                            )}
-                          </div>
-                        </div>
-                        <Popover content={taskContent} trigger="click">
-                          <TbDotsVertical
-                            style={{ cursor: "pointer" }}
-                            className="dotsVertical-db"
-                          />
-                        </Popover>
-                      </div>
-                    </div>
-                  );
-                } else {
-                  return <></>;
-                }
-              })}
-              {addTask === list._id ? (
-                <div className="taskDetails-wrapper">
-                  <div className="taskDetails">
-                    <div className="check">
-                      <MuiCheckbox
-                        icon={<RadioButtonUncheckedIcon />}
-                        checkedIcon={<CheckCircleOutlineIcon />}
-                        className="checkbox"
-                        sx={{ "& .MuiSvgIcon-root": { fontSize: 20 } }}
+        {lists ? (
+          lists.map((list, i) => (
+            <ListContainer key={list._id}>
+              <Paper
+                sx={{
+                  padding: "12px",
+                  margin: "auto",
+                  height: "auto",
+                  backgroundColor: "#fff",
+                  borderLeft: `10px solid ${list.color}`,
+                }}
+                key={list._id}
+              >
+                <div className="paper-header">
+                  {editList === true ? (
+                    <form onSubmit={() => updateList(list._id)}>
+                      <input
+                        id="outlined-basic"
+                        placeholder="New List"
+                        autoComplete="off"
+                        autoFocus
+                        onChange={(e) => setULName(e.target.value)}
+                        value={ulName}
                       />
-                    </div>
-                    <div className="taskDetails-container">
-                      <div className="taskName">
-                        <textarea
-                          name=""
-                          placeholder="Title"
-                          className="taskTitle"
-                          autoFocus
-                          onChange={(e) => setTName(e.target.value)}
-                          value={list.taskName}
-                          style={{
-                            placeholder: "Details",
-                            resize: "none",
-                            height: "22px",
-                            minHeight: "22px",
-                            maxHeight: "132px",
-                            overflowY: "hidden",
-                          }}
-                        ></textarea>
-                        <textarea
-                          name=""
-                          placeholder="Details"
-                          className="taskDetail"
-                          onChange={(e) => setTDName(e.target.value)}
-                          style={{
-                            placeholder: "Details",
-                            resize: "none",
-                            height: "16px",
-                            minHeight: "16px",
-                            maxHeight: "9.0072e+15px",
-                            overflowY: "hidden",
-                          }}
-                        ></textarea>
-                      </div>
-                      {dateValue.length !== 0 ? (
-                        <div className="date">
-                          <Chip
-                            label={`${dateNow[0]}, ${dateNow[1]} ${dateNow[2]}`}
-                            color="primary"
-                            value={dateValue.$d}
-                            className="date-chip"
-                            variant="outlined"
-                            size="small"
-                            onDelete={handleDelete}
-                          />
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                      {priority ? (
-                        <Tag color={priority}>
-                          {priority === "success"
-                            ? "low"
-                            : priority === "warning"
-                            ? "high"
-                            : priority === "error"
-                            ? "critical"
-                            : ""}
-                        </Tag>
-                      ) : (
-                        ""
-                      )}
-
-                      <div className="attachments">
-                        <Popover content={calendar} trigger="click">
-                          <Tooltip title="Add date" arrow>
-                            <div>
-                              <HiCalendarDays />
-                            </div>
-                          </Tooltip>
-                        </Popover>
-                        <Popover content={label} trigger="click">
-                          <Tooltip title="Add priority" arrow>
-                            <div>
-                              <HiOutlineTag />
-                            </div>
-                          </Tooltip>
-                        </Popover>
-                        <div>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            onClick={taskSubmit}
+                    </form>
+                  ) : (
+                    <p>{list.name}</p>
+                  )}
+                  <Popover
+                    content={
+                      <Pop>
+                        <ul>
+                          <li
+                            onClick={() => {
+                              setEditList(true);
+                              setListData(list);
+                            }}
                           >
-                            Submit
-                          </Button>
+                            <HiPencil /> <span> Rename list</span>
+                          </li>
+                          <li>
+                            <FaPaintBrush /> <span> Set color</span>
+                          </li>
+                          <li onClick={() => deleteList(list._id)}>
+                            <HiTrash />
+                            <span> Delete list</span>
+                          </li>
+                        </ul>
+                      </Pop>
+                    }
+                    trigger="click"
+                    className="pops"
+                  >
+                    <TbDotsVertical style={{ cursor: "pointer" }} />
+                  </Popover>
+                </div>
+                <div className="addTask" onClick={() => setAddTask(list._id)}>
+                  <TbPlus size={19} />
+                  <span>Add a task</span>
+                </div>
+                {list.results ? (
+                  list.results.map((task, i) => {
+                    return (
+                      <div className="taskDetails-wrapper" key={task._id}>
+                        <div className="taskDetails">
+                          <div className="check">
+                            <MuiCheckbox
+                              icon={<RadioButtonUncheckedIcon />}
+                              checkedIcon={<CheckCircleOutlineIcon />}
+                              className="checkbox"
+                              sx={{ "& .MuiSvgIcon-root": { fontSize: 20 } }}
+                            />
+                          </div>
+                          <div className="taskDetails-container-db">
+                            <div className="t">
+                              <div className="t-name">{task.taskName}</div>
+                              <div className="t-text">{task.text}</div>
+                            </div>
+                            <div className="date-label">
+                              <div
+                                className="date"
+                                sx={{ marginBotton: "10px" }}
+                              >
+                                <DateTask dateNow={task.date} />
+                              </div>
+                              {task.priority === "low" ? (
+                                <Tag color="success">{task.priority}</Tag>
+                              ) : task.priority === "high" ? (
+                                <Tag color="warning">{task.priority}</Tag>
+                              ) : task.priority === "critical" ? (
+                                <Tag color="error">{task.priority}</Tag>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                          </div>
+                          <Popover content={taskContent} trigger="click">
+                            <TbDotsVertical
+                              style={{ cursor: "pointer" }}
+                              className="dotsVertical-db"
+                            />
+                          </Popover>
                         </div>
                       </div>
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
+                {addTask === list._id ? (
+                  <div className="taskDetails-wrapper">
+                    <div className="taskDetails">
+                      <div className="check">
+                        <MuiCheckbox
+                          icon={<RadioButtonUncheckedIcon />}
+                          checkedIcon={<CheckCircleOutlineIcon />}
+                          className="checkbox"
+                          sx={{ "& .MuiSvgIcon-root": { fontSize: 20 } }}
+                        />
+                      </div>
+                      <div className="taskDetails-container">
+                        <div className="taskName">
+                          <textarea
+                            name=""
+                            placeholder="Title"
+                            className="taskTitle"
+                            autoFocus
+                            onChange={(e) => setTName(e.target.value)}
+                            value={list.taskName}
+                            style={{
+                              placeholder: "Details",
+                              resize: "none",
+                              height: "22px",
+                              minHeight: "22px",
+                              maxHeight: "132px",
+                              overflowY: "hidden",
+                            }}
+                          ></textarea>
+                          <textarea
+                            name=""
+                            placeholder="Details"
+                            className="taskDetail"
+                            onChange={(e) => setTDName(e.target.value)}
+                            style={{
+                              placeholder: "Details",
+                              resize: "none",
+                              height: "16px",
+                              minHeight: "16px",
+                              maxHeight: "9.0072e+15px",
+                              overflowY: "hidden",
+                            }}
+                          ></textarea>
+                        </div>
+                        {dateValue.length !== 0 ? (
+                          <div className="date">
+                            <Chip
+                              label={`${dateNow[0]}, ${dateNow[1]} ${dateNow[2]}`}
+                              color="primary"
+                              value={dateValue.$d}
+                              className="date-chip"
+                              variant="outlined"
+                              size="small"
+                              onDelete={handleDelete}
+                            />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                        {priority ? (
+                          <Tag color={priority}>
+                            {priority === "success"
+                              ? "low"
+                              : priority === "warning"
+                              ? "high"
+                              : priority === "error"
+                              ? "critical"
+                              : ""}
+                          </Tag>
+                        ) : (
+                          ""
+                        )}
+
+                        <div className="attachments">
+                          <Popover content={calendar} trigger="click">
+                            <Tooltip title="Add date" arrow>
+                              <div>
+                                <HiCalendarDays />
+                              </div>
+                            </Tooltip>
+                          </Popover>
+                          <Popover content={label} trigger="click">
+                            <Tooltip title="Add priority" arrow>
+                              <div>
+                                <HiOutlineTag />
+                              </div>
+                            </Tooltip>
+                          </Popover>
+                          <div>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              onClick={taskSubmit}
+                            >
+                              Submit
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                      <Popover content={taskContent} trigger="click">
+                        <TbDotsVertical
+                          style={{ cursor: "pointer" }}
+                          className="dotsVertical"
+                        />
+                      </Popover>
                     </div>
-                    <Popover content={taskContent} trigger="click">
-                      <TbDotsVertical
-                        style={{ cursor: "pointer" }}
-                        className="dotsVertical"
-                      />
-                    </Popover>
                   </div>
-                </div>
-              ) : (
-                ""
-              )}
-              {completed ? (
-                <div className="complete">
-                  <Accordion sx={{ boxShadow: 0, padding: 0 }}>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Typography
-                        sx={{
-                          fontFamily: "Raleway",
-                          fontSize: "14px",
-                          fontWeight: 500,
-                          color: "#777777",
-                        }}
+                ) : (
+                  ""
+                )}
+                {completed ? (
+                  <div className="complete">
+                    <Accordion sx={{ boxShadow: 0, padding: 0 }}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
                       >
-                        Completed
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails sx={{ padding: "8px" }}>
-                      <div className="complete-details">
-                        <div className="complete-icons">
-                          <IoCheckmarkSharp />
+                        <Typography
+                          sx={{
+                            fontFamily: "Raleway",
+                            fontSize: "14px",
+                            fontWeight: 500,
+                            color: "#777777",
+                          }}
+                        >
+                          Completed
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ padding: "8px" }}>
+                        <div className="complete-details">
+                          <div className="complete-icons">
+                            <IoCheckmarkSharp />
+                          </div>
+                          <p>hello</p>
+                          <div className="complete-icons">
+                            <FaRegTrashAlt className="trash" />
+                          </div>
                         </div>
-                        <p>hello</p>
-                        <div className="complete-icons">
-                          <FaRegTrashAlt className="trash" />
+                      </AccordionDetails>
+                      <AccordionDetails sx={{ padding: "8px" }}>
+                        <div className="complete-details">
+                          <div className="complete-icons">
+                            <IoCheckmarkSharp />
+                          </div>
+                          <p>hello</p>
+                          <div className="complete-icons">
+                            <FaRegTrashAlt className="trash" />
+                          </div>
                         </div>
-                      </div>
-                    </AccordionDetails>
-                    <AccordionDetails sx={{ padding: "8px" }}>
-                      <div className="complete-details">
-                        <div className="complete-icons">
-                          <IoCheckmarkSharp />
-                        </div>
-                        <p>hello</p>
-                        <div className="complete-icons">
-                          <FaRegTrashAlt className="trash" />
-                        </div>
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                </div>
-              ) : (
-                ""
-              )}
-            </Paper>
-          </ListContainer>
-        ))}
+                      </AccordionDetails>
+                    </Accordion>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </Paper>
+            </ListContainer>
+          ))
+        ) : (
+          <BounceLoader color="#36d7b7" />
+        )}
         {addList ? (
           <div className="addListName" onBlur={() => setAddList(false)}>
             <form onSubmit={listSubmit}>
