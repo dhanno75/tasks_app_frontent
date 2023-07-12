@@ -101,7 +101,6 @@ const ListSlice = createSlice({
         state.error = null;
       })
       .addCase(addingList.fulfilled, (state, { payload }) => {
-        console.log(payload);
         state.loading = false;
         state.success = true;
         state.lists.push(payload.data);

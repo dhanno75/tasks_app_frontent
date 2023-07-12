@@ -10,6 +10,7 @@ import Navigation from "./components/Navigation";
 import About from "./components/About";
 import VerifiedViewPage from "./components/VerifiedViewPage";
 import Dashboard from "./components/Dashboard";
+import Color from "./components/Color";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         />
         <Route path="/about" element={<About />} />
         <Route path="/" element={<Dashboard />} />
+        <Route path="/color" element={<Color />} />
       </Routes>
     </>
   );

@@ -22,7 +22,7 @@ const DateTask = ({ dateNow }) => {
       variant="outlined"
       size="small"
       defaultValue={null}
-      onDelete={handleDelete}
+      // onDelete={handleDelete}
       sx={{
         padding: "4px 0",
         border: "none",
