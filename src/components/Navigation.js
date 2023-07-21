@@ -20,7 +20,9 @@ const Navigation = () => {
   return (
     <Container isLoggedIn={isLoggedIn}>
       <div className="left">
-        <p className="logo">TasksBoard</p>
+        <Link to="/">
+          <p className="logo">TasksBoard</p>
+        </Link>
         <div>
           <Link to="/about">About</Link>
         </div>
