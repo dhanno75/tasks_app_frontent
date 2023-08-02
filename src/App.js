@@ -9,15 +9,39 @@ import ForgotPassword from "./components/ForgotPassword";
 import Navigation from "./components/Navigation";
 import About from "./components/About";
 import VerifiedViewPage from "./components/VerifiedViewPage";
-import Dashboard from "./components/Dashboard";
 import Color from "./components/Color";
+import { Suspense, lazy } from "react";
+import { FallingLines } from "react-loader-spinner";
 
+const DashboardComponent = lazy(() => import("./components/Dashboard"));
 function App() {
   return (
     <>
       <Navigation />
       <ToastContainer />
       <Routes>
+        <Route
+          path="/"
+          element={
+            <Suspense
+              fallback={
+                <FallingLines
+                  color="#4fa94d"
+                  cssOverride={{
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                  }}
+                  width="100"
+                  visible={true}
+                  ariaLabel="falling-lines-loading"
+                />
+              }
+            >
+              <DashboardComponent />
+            </Suspense>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
@@ -27,7 +51,6 @@ function App() {
           element={<VerifiedViewPage />}
         />
         <Route path="/about" element={<About />} />
-        <Route path="/" element={<Dashboard />} />
         <Route path="/color" element={<Color />} />
       </Routes>
     </>

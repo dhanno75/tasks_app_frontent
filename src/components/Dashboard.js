@@ -18,10 +18,7 @@ import MuiCheckbox from "@mui/material/Checkbox";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { TbDotsVertical, TbPlus } from "react-icons/tb";
-// import Task from "./Task";
 import { useDispatch, useSelector } from "react-redux";
-// import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { addingList, getLists } from "../redux/features/ListSlice";
 import { DashboardContainer } from "./styled_components/dashboardContainer";
 import { Pop, ListContainer } from "./styled_components/listCard";
@@ -70,7 +67,6 @@ const Dashboard = () => {
 
   const listRef = useRef();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const userId = localStorage.getItem("userId");
   const { lists } = useSelector((state) => state.list);
@@ -148,7 +144,7 @@ const Dashboard = () => {
   };
 
   const setTaskData = function (task) {
-    const taskDate = (new Date(task.date) + "").split(" ");
+    // const taskDate = (new Date(task.date) + "").split(" ");
 
     const priority =
       task.priority === "low"
@@ -371,6 +367,7 @@ const Dashboard = () => {
                     alignItems: "center",
                     gap: "4px",
                   }}
+                  className="hello"
                 >
                   <HuePicker
                     width="300px"
@@ -403,6 +400,7 @@ const Dashboard = () => {
                   backgroundColor: "#fff",
                   borderLeft: `10px solid ${list.color}`,
                 }}
+                className="task-paper"
                 key={list._id}
               >
                 <div className="paper-header">
