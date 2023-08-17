@@ -24,7 +24,7 @@ const Navigation = () => {
           <p className="logo">TasksBoard</p>
         </Link>
         <div>
-          <Link to="/about">About</Link>
+          <Link to="/mainBoard">Tasks</Link>
         </div>
       </div>
 

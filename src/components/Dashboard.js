@@ -58,10 +58,6 @@ const Dashboard = () => {
   const [tname, setTName] = useState("");
   const [tdname, setTDName] = useState("");
 
-  // console.log(tname, tdname, dateValue, priority);
-  // console.log(dateValue.$d);
-  // console.log(typeof (dateValue.$d + ""));
-
   const dateNow = (Object.values(dateValue)[2] + "").split(" ");
   // const dateToDb = new Date(Object.values(dateValue)[2]).toISOString();
 
@@ -70,6 +66,7 @@ const Dashboard = () => {
 
   const userId = localStorage.getItem("userId");
   const { lists } = useSelector((state) => state.list);
+
   useEffect(() => {
     dispatch(getLists({ userId }));
   }, [dispatch, userId]);
@@ -167,7 +164,6 @@ const Dashboard = () => {
       dateForm = new Date(Object.values(dateValue)[2]).toISOString();
     }
 
-    console.log(taskId, tname, tdname, dateForm, priority);
     const values = {
       taskName: tname,
       text: tdname,
@@ -201,7 +197,6 @@ const Dashboard = () => {
   };
 
   const taskCompleted = async (taskId) => {
-    console.log(taskId);
     const values = { completed: true };
     await fetch(`${API}/tasks/${taskId}`, {
       method: "PUT",
@@ -228,7 +223,6 @@ const Dashboard = () => {
   };
 
   const taskInCompleted = async (taskId) => {
-    console.log(taskId);
     const values = { completed: false };
     await fetch(`${API}/tasks/${taskId}`, {
       method: "PUT",
@@ -685,7 +679,7 @@ const Dashboard = () => {
                     {list.results
                       ? list.results.map((task) => {
                           return (
-                            <>
+                            <div key={task._id}>
                               {task.completed === true ? (
                                 <AccordionDetails sx={{ padding: "8px" }}>
                                   <div className="complete-details">
@@ -698,14 +692,17 @@ const Dashboard = () => {
                                     </div>
                                     <p>{task.taskName}</p>
                                     <div className="complete-icons">
-                                      <FaRegTrashAlt className="trash" />
+                                      <FaRegTrashAlt
+                                        className="trash"
+                                        onClick={() => deleteTask(task._id)}
+                                      />
                                     </div>
                                   </div>
                                 </AccordionDetails>
                               ) : (
                                 ""
                               )}
-                            </>
+                            </div>
                           );
                         })
                       : ""}
@@ -852,61 +849,9 @@ const Dashboard = () => {
             <TbPlus /> &nbsp;Add new list
           </Button>
         )}
-        {/* {buttons ? (
-          <Button
-            className="newListButton"
-            onClick={() => {
-              setAddList(true);
-              setAddButtons(false);
-            }}
-          >
-            <TbPlus /> &nbsp;Add new list
-          </Button>
-        ) : (
-          ""
-        )} */}
-        {/* {addList ? (
-          <div className="addListName" onBlur={() => setAddList(false)}>
-            <form onSubmit={handleSubmit}>
-              <input
-                id="outlined-basic"
-                placeholder="New List"
-                variant="outlined"
-                autoFocus
-                ref={nameRef}
-              />
-            </form>
-            <TbPlus />
-          </div>
-        ) : (
-          <Button
-            className="newListButton"
-            onClick={() => {
-              setAddList(true);
-            }}
-          >
-            <TbPlus /> &nbsp;Add new list
-          </Button>
-        )} */}
       </Box>
     </DashboardContainer>
   );
 };
 
 export default Dashboard;
-
-// {dateValue.$y !== 2022 ? (
-//   <div className="date">
-//     <Chip
-//       label={`${dateNow[0]}, ${dateNow[1]} ${dateNow[2]}`}
-//       color="primary"
-//       className="date-chip"
-//       variant="outlined"
-//       size="small"
-//       defaultValue={null}
-//       onDelete={handleDelete}
-//     />
-//   </div>
-// ) : (
-//   ""
-// )}

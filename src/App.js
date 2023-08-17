@@ -21,7 +21,7 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route
-          path="/"
+          path="/mainBoard"
           element={
             <Suspense
               fallback={
@@ -50,7 +50,7 @@ function App() {
           path="/verify/:userId/:verificationToken"
           element={<VerifiedViewPage />}
         />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<About />} />
         <Route path="/color" element={<Color />} />
       </Routes>
     </>
