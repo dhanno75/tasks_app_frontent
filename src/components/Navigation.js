@@ -21,11 +21,9 @@ const Navigation = () => {
     <Container isLoggedIn={isLoggedIn}>
       <div className="left">
         <Link to="/">
-          <p className="logo">TasksBoard</p>
+          <div className="logo">TasksBoard</div>
         </Link>
-        <div>
-          <Link to="/mainBoard">Tasks</Link>
-        </div>
+        <div>{isLoggedIn ? <Link to="/mainBoard">Tasks</Link> : <></>}</div>
       </div>
 
       <div className="right">
@@ -41,6 +39,7 @@ const Navigation = () => {
 };
 
 const Container = styled.nav`
+  min-width: 100vw;
   width: 100vw;
   height: 70px;
   padding: 20px;
@@ -55,12 +54,13 @@ const Container = styled.nav`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 12%;
+    width: 11%;
 
-    p {
+    .logo {
       font-size: 22px;
       margin: 0;
       color: #d4af37;
+      align-self: center;
     }
   }
 
@@ -69,7 +69,7 @@ const Container = styled.nav`
     justify-content: space-between;
     align-items: center;
     /* width: 10%; */
-    width: ${({ isLoggedIn }) => (isLoggedIn ? "12%" : "10%")};
+    width: 10%;
     margin-right: 12px;
 
     p {

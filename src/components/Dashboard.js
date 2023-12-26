@@ -344,7 +344,7 @@ const Dashboard = () => {
           flexWrap: "wrap",
           "& > :not(style)": {
             m: 1,
-            width: "20%",
+            width: "330px",
           },
           padding: "20px",
         }}
